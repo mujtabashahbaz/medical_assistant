@@ -1,5 +1,5 @@
 import streamlit as st
-import os
+import os, getpass
 from langchain_openai import ChatOpenAI
 from langgraph.graph import MessagesState
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -9,16 +9,18 @@ from langgraph.checkpoint.memory import MemorySaver
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_core.tools import tool
 
-# Set API Key
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-if not OPENAI_API_KEY:
-    st.warning("Please set your OPENAI_API_KEY in the environment.")
-    OPENAI_API_KEY = st.text_input("Enter OpenAI API Key:", type="password")
-    if OPENAI_API_KEY:
-        os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+# --- 🚀 ENVIRONMENT SETUP ---
+def _set_env(var: str):
+    if not os.environ.get(var):
+        os.environ[var] = getpass.getpass(f"{var}: ")
+
+_set_env("OPENAI_API_KEY")
+_set_env("LANGCHAIN_API_KEY")
+
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_PROJECT"] = "langchain-academy"
 
 # --- 🚀 LANGGRAPH TOOLS ---
-
 @tool
 def check_symptoms(symptoms: str) -> str:
     """Analyze symptoms and suggest possible conditions."""
