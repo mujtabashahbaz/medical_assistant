@@ -3,3 +3,4 @@ langchain_openai
 langgraph
 langchain_core
 langchain_community
+duckduckgo-search
