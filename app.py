@@ -98,8 +98,14 @@ if user_input:
     response = react_graph_memory.invoke({"messages": st.session_state.chat_history}, config)
 
     for msg in response["messages"]:
+        if "web_search" in msg.content:  # Detect if search tool was used
+            st.write(f"**🔍 AI Search:** {msg.content}")
+            if msg.metadata and "source" in msg.metadata:  # Extract source URL
+                st.write(f"📌 **Source:** [{msg.metadata['source']}]({msg.metadata['source']})")
+        else:
+            st.write(f"**🤖 AI:** {msg.content}")
+
         st.session_state.chat_history.append(msg)
-        st.write(f"**🤖 AI:** {msg.content}")
 
 # Display chat history
 st.subheader("📜 Conversation History")
